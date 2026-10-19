@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>writernet.org • professional writing platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ================= LIGHT PROFESSIONAL THEME ================= */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',system-ui,-apple-system,sans-serif; }
+
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --surface-alt: #f0f3f9;
+            --primary: #1e3c72;
+            --primary-light: #2a5298;
+            --primary-soft: #e8eef9;
+            --accent: #c8891a;
+            --accent-soft: #fdf4e3;
+            --text: #1a2332;
+            --text-muted: #5a6b82;
+            --border: #e1e7f0;
+            --border-strong: #cdd6e4;
+            --shadow-sm: 0 2px 8px rgba(30,60,114,0.06);
+            --shadow-md: 0 8px 24px rgba(30,60,114,0.10);
+            --shadow-lg: 0 20px 50px rgba(30,60,114,0.14);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --success: #0e9f6e;
+            --danger: #e02424;
+        }
+
+        html { scroll-behavior:smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 15px;
+        }
+
+        /* ================= PAGE SYSTEM ================= */
+        .page { display:none; flex-direction:column; min-height:100vh; width:100%; }
+        .page.active { display:flex; animation:fadeIn 0.3s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+
+        /* ================= WHATSAPP FLOAT ================= */
+        .whatsapp-float {
+            position:fixed; bottom:26px; right:26px; background:#25D366; color:#fff;
+            width:56px; height:56px; border-radius:50%; display:flex; align-items:center;
+            justify-content:center; font-size:1.9rem; box-shadow:0 6px 20px rgba(37,211,102,0.4);
+            cursor:pointer; z-index:9999; transition:0.25s; text-decoration:none;
+            border:2px solid #fff;
+        }
+        .whatsapp-float:hover { transform:scale(1.1) translateY(-3px); box-shadow:0 10px 28px rgba(37,211,102,0.55); }
+        .whatsapp-float .tooltip {
+            position:absolute; right:68px; background:var(--text); color:#fff;
+            padding:0.45rem 0.9rem; border-radius:8px; font-size:0.78rem; font-weight:500;
+            white-space:nowrap; opacity:0; visibility:hidden; transition:0.2s;
+        }
+        .whatsapp-float:hover .tooltip { opacity:1; visibility:visible; }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            background:#fff; padding:0.85rem 5%; display:flex; align-items:center;
+            justify-content:space-between; position:sticky; top:0; z-index:100;
+            border-bottom:1px solid var(--border); box-shadow:0 1px 4px rgba(30,60,114,0.04);
+        }
+        .logo {
+            display:flex; align-items:center; gap:0.5rem; font-weight:800;
+            font-size:1.4rem; letter-spacing:-0.03em; color:var(--primary);
+            cursor:pointer; user-select:none;
+        }
+        .logo i { color:var(--accent); font-size:1.6rem; }
+        .nav-links { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+        .nav-links a {
+            text-decoration:none; color:var(--text-muted); font-weight:500;
+            font-size:0.88rem; transition:0.2s; cursor:pointer; white-space:nowrap;
+        }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); }
+        .user-badge {
+            display:flex; align-items:center; gap:0.5rem; background:var(--primary-soft);
+            padding:0.3rem 0.85rem 0.3rem 0.5rem; border-radius:40px;
+            font-weight:600; font-size:0.82rem; cursor:pointer; transition:0.2s;
+            border:1px solid #d4e0f5; color:var(--primary);
+        }
+        .user-badge:hover { background:#dde7f8; }
+        .user-avatar-sm {
+            width:26px; height:26px; border-radius:50%; background:var(--primary);
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.7rem; color:#fff; overflow:hidden; flex-shrink:0;
+        }
+        .user-avatar-sm img { width:100%; height:100%; object-fit:cover; display:none; }
+        .user-avatar-sm.has-image img { display:block; }
+        .user-avatar-sm.has-image i { display:none; }
+        .logout-btn {
+            background:transparent; border:1.5px solid var(--border-strong); color:var(--text-muted);
+            font-weight:600; padding:0.35rem 0.85rem; border-radius:40px; font-size:0.78rem;
+            cursor:pointer; transition:0.2s; display:flex; align-items:center; gap:0.35rem;
+            font-family:inherit;
+        }
+        .logout-btn:hover { border-color:var(--danger); color:var(--danger); }
+
+        /* ================= CONTACT BAR ================= */
+        .contact-bar {
+            background:var(--surface-alt); border-bottom:1px solid var(--border);
+            padding:0.5rem 5%; display:flex; align-items:center; justify-content:space-between;
+            flex-wrap:wrap; gap:0.6rem; font-size:0.8rem; color:var(--text-muted);
+        }
+        .contact-item { display:flex; align-items:center; gap:0.45rem; }
+        .contact-item i { color:var(--accent); font-size:0.85rem; }
+        .contact-item a { color:var(--text-muted); text-decoration:none; transition:0.2s; }
+        .contact-item a:hover { color:var(--primary); }
+        .contact-item.wa a { color:#1a9e4b; font-weight:600; }
+        .contact-item.wa i { color:#25D366; }
+
+        /* ================= BUTTONS ================= */
+        .btn-primary {
+            background:var(--primary); color:#fff; font-weight:600; padding:0.8rem 1.6rem;
+            border-radius:60px; border:none; font-size:0.92rem; cursor:pointer;
+            transition:0.2s; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+            text-decoration:none; font-family:inherit;
+        }
+        .btn-primary:hover { background:var(--primary-light); transform:translateY(-1px); box-shadow:0 8px 20px -8px rgba(30,60,114,0.5); }
+        .btn-outline {
+            background:transparent; color:var(--primary); font-weight:600; padding:0.75rem 1.5rem;
+            border-radius:60px; border:1.5px solid var(--primary); font-size:0.9rem;
+            cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:0.5rem;
+            font-family:inherit;
+        }
+        .btn-outline:hover { background:var(--primary); color:#fff; }
+        .btn-paypal {
+            background:#0070ba; color:#fff; font-weight:700; padding:0.85rem 1.5rem;
+            border-radius:50px; border:none; font-size:0.95rem; cursor:pointer;
+            transition:0.2s; display:flex; align-items:center; justify-content:center; gap:0.5rem;
+            width:100%; font-family:inherit;
+        }
+        .btn-paypal:hover { background:#005ea6; transform:translateY(-1px); box-shadow:0 8px 20px -8px rgba(0,112,186,0.5); }
+        .btn-earn {
+            background:var(--success); color:#fff; font-weight:700; padding:0.6rem 1.2rem;
+            border-radius:50px; border:none; font-size:0.85rem; cursor:pointer;
+            transition:0.2s; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem;
+            font-family:inherit;
+        }
+        .btn-earn:hover { background:#0b8a5e; transform:translateY(-1px); }
+        .btn-earn:disabled { background:#9ca3af; cursor:not-allowed; transform:none; }
+
+        /* ================= PASSWORD TOGGLE ================= */
+        .password-wrapper { position:relative; }
+        .password-wrapper input { padding-right:3rem !important; }
+        .toggle-password {
+            position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+            background:none; border:none; cursor:pointer; color:var(--text-muted);
+            font-size:1rem; padding:0.2rem; transition:0.2s; z-index:2;
+        }
+        .toggle-password:hover { color:var(--primary); }
+
+        /* ================= AUTH OVERLAY ================= */
+        .auth-overlay {
+            position:fixed; inset:0; background:rgba(26,35,50,0.55); backdrop-filter:blur(6px);
+            display:flex; align-items:center; justify-content:center; z-index:1000;
+            padding:1.5rem; transition:0.3s; overflow-y:auto;
+        }
+        .auth-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+        .auth-card {
+            background:#fff; max-width:430px; width:100%; border-radius:24px;
+            padding:2.2rem 2rem; box-shadow:var(--shadow-lg); animation:popUp 0.35s ease; margin:auto;
+        }
+        @keyframes popUp { from{opacity:0;transform:scale(0.96) translateY(14px);} to{opacity:1;transform:scale(1) translateY(0);} }
+        .auth-header { text-align:center; margin-bottom:1.6rem; }
+        .auth-header h2 { font-size:1.7rem; font-weight:800; color:var(--primary); letter-spacing:-0.02em; }
+        .auth-header p { color:var(--text-muted); font-size:0.9rem; margin-top:0.25rem; }
+        .auth-tabs {
+            display:flex; background:var(--surface-alt); border-radius:40px; padding:4px;
+            margin-bottom:1.6rem;
+        }
+        .auth-tab {
+            flex:1; text-align:center; padding:0.65rem 0; font-weight:600; font-size:0.88rem;
+            border:none; background:transparent; border-radius:40px; cursor:pointer;
+            color:var(--text-muted); transition:0.2s; font-family:inherit;
+        }
+        .auth-tab.active { background:#fff; color:var(--primary); box-shadow:var(--shadow-sm); }
+        .auth-form { display:flex; flex-direction:column; gap:0.9rem; }
+        .input-group { position:relative; }
+        .input-group > i { position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.95rem; z-index:2; }
+        .input-group input {
+            width:100%; padding:0.85rem 1rem 0.85rem 2.7rem; border:1.5px solid var(--border-strong);
+            border-radius:50px; font-size:0.92rem; background:var(--surface-alt); color:var(--text); transition:0.2s;
+            font-family:inherit;
+        }
+        .input-group input::placeholder { color:#9aa8bc; }
+        .input-group input:focus { outline:none; border-color:var(--primary); background:#fff; box-shadow:0 0 0 4px var(--primary-soft); }
+        .auth-footer { text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:1.2rem; }
+        .auth-footer a { color:var(--primary); text-decoration:none; font-weight:600; cursor:pointer; }
+
+        /* ================= HERO ================= */
+        .hero {
+            padding:4rem 5% 3.5rem; display:flex; align-items:center;
+            justify-content:space-between; flex-wrap:wrap; gap:2rem;
+            background:linear-gradient(135deg, #eef3fc 0%, #ffffff 70%);
+            border-bottom:1px solid var(--border);
+        }
+        .hero-content { max-width:620px; }
+        .hero-badge {
+            display:inline-flex; align-items:center; gap:0.4rem; background:var(--accent-soft);
+            color:var(--accent); font-weight:600; font-size:0.78rem; padding:0.4rem 1rem;
+            border-radius:60px; margin-bottom:1.2rem; border:1px solid #f3e0b5;
+        }
+        .hero h1 { font-size:2.8rem; font-weight:800; line-height:1.15; letter-spacing:-0.03em; color:var(--primary); margin-bottom:1.1rem; }
+        .hero h1 span { color:var(--accent); }
+        .hero p { font-size:1.08rem; color:var(--text-muted); max-width:540px; margin-bottom:1.8rem; }
+        .hero-actions { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
+        .hero-stats { display:flex; gap:2.5rem; }
+        .stat-item h3 { font-size:1.7rem; font-weight:800; color:var(--primary); }
+        .stat-item p { font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+        .hero-image { flex:1; min-width:260px; display:flex; justify-content:center; align-items:center; }
+        .hero-img-wrap { width:100%; max-width:420px; border-radius:24px; overflow:hidden; box-shadow:var(--shadow-lg); border:1px solid var(--border); background:#fff; }
+        .hero-img-wrap img { width:100%; height:320px; object-fit:cover; display:block; }
+
+        /* ================= SECTION STYLES ================= */
+        .section { padding:3.5rem 5%; }
+        .section-alt { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+        .section-title { font-size:1.7rem; font-weight:800; letter-spacing:-0.02em; color:var(--primary); margin-bottom:0.4rem; text-align:center; }
+        .section-sub { color:var(--text-muted); margin-bottom:2.2rem; text-align:center; max-width:600px; margin-left:auto; margin-right:auto; }
+
+        .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.5rem; }
+        .feature-card {
+            background:#fff; border-radius:var(--radius); padding:1.8rem 1.5rem;
+            border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:0.2s;
+        }
+        .feature-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+        .feature-card i { font-size:1.9rem; color:var(--accent); margin-bottom:0.9rem; display:block; }
+        .feature-card h4 { font-weight:700; margin-bottom:0.4rem; font-size:1rem; }
+        .feature-card p { font-size:0.86rem; color:var(--text-muted); }
+
+        /* ================= JOB SEARCH & CARDS ================= */
+        .search-wrap { background:var(--surface); border-bottom:1px solid var(--border); padding:1.6rem 5%; }
+        .search-bar { display:flex; gap:0.7rem; max-width:960px; margin:0 auto; flex-wrap:wrap; }
+        .search-bar input, .search-bar select {
+            padding:0.85rem 1.1rem; border:1.5px solid var(--border-strong); border-radius:50px;
+            font-size:0.9rem; background:#fff; color:var(--text); font-family:inherit;
+            flex:1; min-width:170px; transition:0.2s;
+        }
+        .search-bar input:focus, .search-bar select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px var(--primary-soft); }
+        .search-bar button {
+            background:var(--primary); color:#fff; font-weight:600; padding:0.85rem 1.8rem;
+            border-radius:50px; border:none; font-size:0.9rem; cursor:pointer;
+            display:flex; align-items:center; gap:0.5rem; transition:0.2s; font-family:inherit;
+        }
+        .search-bar button:hover { background:var(--primary-light); }
+
+        .jobs-section { padding:2rem 5% 4rem; flex:1; }
+        .jobs-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.3rem; flex-wrap:wrap; gap:0.5rem; }
+        .jobs-meta span { color:var(--text-muted); font-size:0.85rem; }
+        .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:1.3rem; }
+        .job-card {
+            background:#fff; border-radius:var(--radius); padding:1.5rem; border:1px solid var(--border);
+            transition:0.22s; cursor:pointer; display:flex; flex-direction:column; box-shadow:var(--shadow-sm);
+        }
+        .job-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:#c3d2ea; }
+        .job-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.9rem; }
+        .company-icon {
+            background:var(--primary-soft); color:var(--primary); width:44px; height:44px;
+            border-radius:12px; display:flex; align-items:center; justify-content:center;
+            font-size:1.25rem; font-weight:800;
+        }
+        .job-type {
+            font-size:0.63rem; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;
+            background:var(--accent-soft); color:var(--accent); padding:0.25rem 0.65rem;
+            border-radius:40px; border:1px solid #f3e0b5;
+        }
+        .job-title { font-size:1.05rem; font-weight:700; margin-bottom:0.25rem; color:var(--text); }
+        .job-company { font-size:0.82rem; color:var(--text-muted); margin-bottom:0.7rem; display:flex; align-items:center; gap:0.4rem; }
+        .job-desc { font-size:0.83rem; color:var(--text-muted); margin-bottom:1rem; flex:1; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .job-meta { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:0.85rem; margin-top:auto; }
+        .job-rate { font-weight:700; color:var(--primary); font-size:0.92rem; }
+        .job-rate span { font-weight:400; font-size:0.72rem; color:var(--text-muted); }
+        .btn-apply-sm {
+            background:var(--primary); border:none; color:#fff; font-weight:600;
+            padding:0.4rem 1rem; border-radius:40px; font-size:0.75rem; cursor:pointer; transition:0.2s;
+            font-family:inherit;
+        }
+        .btn-apply-sm:hover { background:var(--primary-light); }
+
+        /* ================= EARNINGS PAGE ================= */
+        .earnings-section { padding:2.5rem 5% 4rem; flex:1; }
+        .balance-card {
+            background:linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius:var(--radius); padding:2.5rem 2rem; color:#fff;
+            margin-bottom:2rem; box-shadow:var(--shadow-md);
+            display:flex; justify-content:space-between; align-items:center;
+            flex-wrap:wrap; gap:1.5rem;
+        }
+        .balance-info h3 { font-size:0.9rem; font-weight:600; opacity:0.85; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.3rem; }
+        .balance-amount { font-size:3.2rem; font-weight:800; letter-spacing:-0.03em; }
+        .balance-amount small { font-size:1.2rem; font-weight:600; opacity:0.8; }
+        .balance-sub { font-size:0.85rem; opacity:0.85; margin-top:0.3rem; display:flex; align-items:center; gap:0.4rem; }
+        .withdraw-info {
+            background:rgba(255,255,255,0.15); border-radius:var(--radius-sm);
+            padding:1.2rem 1.5rem; border:1px solid rgba(255,255,255,0.2);
+            text-align:center;
+        }
+        .withdraw-info p { font-size:0.85rem; margin-bottom:0.5rem; }
+        .withdraw-info .threshold { font-size:1.8rem; font-weight:800; }
+        .withdraw-info .status { font-size:0.75rem; opacity:0.85; margin-top:0.3rem; }
+
+        .earnings-tabs {
+            display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;
+            background:#fff; border-radius:12px; padding:4px; border:1px solid var(--border);
+            max-width:560px;
+        }
+        .earnings-tab {
+            flex:1; text-align:center; padding:0.65rem 0; font-weight:600; font-size:0.85rem;
+            border:none; background:transparent; border-radius:8px; cursor:pointer;
+            color:var(--text-muted); transition:0.2s; font-family:inherit;
+            min-width:100px;
+        }
+        .earnings-tab.active { background:var(--primary); color:#fff; }
+
+        .earnings-panel { display:none; }
+        .earnings-panel.active { display:block; animation:fadeIn 0.3s ease; }
+
+        .video-grid {
+            display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+            gap:1.3rem;
+        }
+        .video-card {
+            background:#fff; border-radius:var(--radius); overflow:hidden;
+            border:1px solid var(--border); box-shadow:var(--shadow-sm);
+            transition:0.2s; display:flex; flex-direction:column;
+        }
+        .video-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+        .video-thumb {
+            position:relative; width:100%; padding-top:56.25%; background:#000;
+            overflow:hidden;
+        }
+        .video-thumb iframe {
+            position:absolute; top:0; left:0; width:100%; height:100%; border:none;
+        }
+        .video-info { padding:1.1rem 1.2rem; display:flex; flex-direction:column; gap:0.6rem; flex:1; }
+        .video-info h4 { font-size:0.95rem; font-weight:700; color:var(--text); }
+        .video-info .reward {
+            display:inline-flex; align-items:center; gap:0.3rem;
+            background:var(--accent-soft); color:var(--accent); font-weight:700;
+            padding:0.25rem 0.7rem; border-radius:40px; font-size:0.7rem;
+            border:1px solid #f3e0b5; align-self:flex-start;
+        }
+        .video-actions { display:flex; gap:0.6rem; margin-top:auto; padding-top:0.5rem; }
+        .video-actions .btn-earn { flex:1; font-size:0.8rem; padding:0.5rem 0.8rem; }
+        .video-actions .watch-link {
+            flex:1; text-decoration:none; text-align:center;
+            background:transparent; border:1.5px solid var(--primary); color:var(--primary);
+            font-weight:600; padding:0.5rem 0.8rem; border-radius:50px; font-size:0.8rem;
+            transition:0.2s; display:flex; align-items:center; justify-content:center; gap:0.3rem;
+        }
+        .video-actions .watch-link:hover { background:var(--primary); color:#fff; }
+        .video-actions .watch-link.watched { background:var(--primary); color:#fff; }
+
+        .link-card {
+            background:#fff; border-radius:var(--radius); padding:1.5rem;
+            border:1px solid var(--border); box-shadow:var(--shadow-sm);
+            display:flex; justify-content:space-between; align-items:center;
+            gap:1rem; flex-wrap:wrap; margin-bottom:1rem;
+            transition:0.2s;
+        }
+        .link-card:hover { border-color:#c3d2ea; box-shadow:var(--shadow-md); }
+        .link-card .link-info { flex:1; min-width:200px; }
+        .link-card .link-info h4 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:0.2rem; }
+        .link-card .link-info p { font-size:0.82rem; color:var(--text-muted); }
+        .link-card .link-reward {
+            display:inline-flex; align-items:center; gap:0.3rem;
+            background:#d1fae5; color:var(--success); font-weight:700;
+            padding:0.3rem 0.8rem; border-radius:40px; font-size:0.78rem;
+            margin-top:0.4rem;
+        }
+
+        /* ================= TASKS PANEL ================= */
+        .task-info-banner {
+            background:var(--accent-soft); border:1px solid #f3e0b5;
+            border-radius:12px; padding:1rem 1.2rem; margin-bottom:1.3rem;
+            font-size:0.85rem; color:#8a6d1a;
+        }
+        .task-info-banner strong { color:var(--accent); }
+        .task-card {
+            background:#fff; border-radius:var(--radius); padding:1.5rem;
+            border:1px solid var(--border); box-shadow:var(--shadow-sm);
+            margin-bottom:1rem;
+        }
+        .task-card .task-header {
+            display:flex; justify-content:space-between; align-items:flex-start;
+            margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem;
+        }
+        .task-card .task-title { font-size:0.98rem; font-weight:700; color:var(--text); }
+        .task-reward {
+            display:inline-flex; align-items:center; gap:0.3rem;
+            background:#d1fae5; color:var(--success); font-weight:700;
+            padding:0.25rem 0.7rem; border-radius:40px; font-size:0.72rem;
+            white-space:nowrap;
+        }
+        .task-question { font-size:0.9rem; color:var(--text-muted); margin-bottom:0.9rem; }
+        .task-options { display:flex; flex-direction:column; gap:0.5rem; }
+        .task-option {
+            display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.9rem;
+            border:1.5px solid var(--border-strong); border-radius:10px;
+            cursor:pointer; transition:0.2s; font-size:0.88rem; background:var(--surface-alt);
+        }
+        .task-option:hover { border-color:var(--primary); background:#fff; }
+        .task-option.selected { border-color:var(--primary); background:var(--primary-soft); font-weight:600; }
+        .task-option.correct { border-color:var(--success); background:#d1fae5; }
+        .task-option.wrong { border-color:var(--danger); background:#fee2e2; }
+        .task-option input { display:none; }
+        .task-submit {
+            margin-top:0.9rem; background:var(--primary); color:#fff; font-weight:600;
+            padding:0.6rem 1.3rem; border-radius:50px; border:none; font-size:0.85rem;
+            cursor:pointer; transition:0.2s; font-family:inherit;
+        }
+        .task-submit:hover { background:var(--primary-light); }
+        .task-submit:disabled { background:#9ca3af; cursor:not-allowed; }
+        .task-result { margin-top:0.7rem; font-size:0.85rem; font-weight:600; }
+
+        .earn-history {
+            background:#fff; border-radius:var(--radius); padding:1.5rem;
+            border:1px solid var(--border); box-shadow:var(--shadow-sm); margin-top:2rem;
+        }
+        .earn-history h4 { font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:1rem; }
+        .earn-history-item {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:0.7rem 0; border-bottom:1px solid var(--border); font-size:0.85rem;
+        }
+        .earn-history-item:last-child { border-bottom:none; }
+        .earn-history-item .desc { display:flex; align-items:center; gap:0.5rem; color:var(--text-muted); }
+        .earn-history-item .desc i { color:var(--accent); }
+        .earn-history-item .amount { font-weight:700; color:var(--success); }
+        .earn-history-empty { text-align:center; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; }
+
+        /* ================= PLANS PAGE ================= */
+        .plans-section { padding:3rem 5% 4rem; flex:1; }
+        .plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.8rem; max-width:1000px; margin:2rem auto 0; }
+        .plan-card {
+            background:#fff; border-radius:var(--radius); padding:2rem; border:2px solid var(--border);
+            box-shadow:var(--shadow-sm); transition:0.25s; display:flex; flex-direction:column;
+            position:relative;
+        }
+        .plan-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+        .plan-card.featured { border-color:var(--primary); }
+        .plan-badge {
+            position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+            background:var(--accent); color:#fff; font-weight:700; font-size:0.65rem;
+            padding:0.3rem 1rem; border-radius:40px; text-transform:uppercase; letter-spacing:0.5px;
+            white-space:nowrap;
+        }
+        .plan-card h3 { font-size:1.3rem; font-weight:800; color:var(--primary); margin-bottom:0.3rem; text-align:center; }
+        .plan-desc { font-size:0.85rem; color:var(--text-muted); text-align:center; margin-bottom:1.2rem; }
+        .plan-price { text-align:center; margin-bottom:1.2rem; }
+        .plan-price .amount { font-size:2.5rem; font-weight:800; color:var(--primary); }
+        .plan-price .period { font-size:0.9rem; color:var(--text-muted); font-weight:500; }
+        .plan-features { list-style:none; margin-bottom:1.5rem; flex:1; }
+        .plan-features li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.6rem; line-height:1.5; }
+        .plan-features li i { color:var(--success); font-size:0.8rem; margin-top:0.25rem; flex-shrink:0; }
+        .plan-note {
+            font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.8rem;
+            padding-top:0.8rem; border-top:1px solid var(--border);
+        }
+
+        /* ================= PAYMENT CONFIRMATION ================= */
+        .payment-confirm-section { padding:3rem 5% 4rem; flex:1; display:flex; justify-content:center; align-items:flex-start; }
+        .confirm-card {
+            background:#fff; border-radius:var(--radius); max-width:560px; width:100%;
+            padding:2.5rem 2rem; border:1px solid var(--border); box-shadow:var(--shadow-lg);
+            text-align:center;
+        }
+        .confirm-icon {
+            width:80px; height:80px; border-radius:50%; background:#d1fae5;
+            display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem;
+            font-size:2.2rem; color:var(--success);
+        }
+        .confirm-card h2 { font-size:1.5rem; font-weight:800; color:var(--primary); margin-bottom:0.5rem; }
+        .confirm-card p { font-size:0.9rem; color:var(--text-muted); margin-bottom:1.2rem; line-height:1.65; }
+        .confirm-details {
+            background:var(--surface-alt); border-radius:12px; padding:1.2rem;
+            text-align:left; margin-bottom:1.5rem; border:1px solid var(--border);
+        }
+        .confirm-details .row { display:flex; justify-content:space-between; padding:0.4rem 0; font-size:0.85rem; }
+        .confirm-details .row .label { color:var(--text-muted); }
+        .confirm-details .row .value { font-weight:600; color:var(--text); }
+        .confirm-actions { display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center; }
+
+        /* ================= ABOUT / HELP ================= */
+        .about-section, .help-section { padding:3rem 5% 4rem; flex:1; }
+        .about-grid, .help-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; margin-bottom:2rem; }
+        .about-card, .help-card {
+            background:#fff; border-radius:var(--radius); padding:1.8rem; border:1px solid var(--border); transition:0.2s;
+        }
+        .about-card:hover, .help-card:hover { border-color:#c3d2ea; box-shadow:var(--shadow-sm); }
+        .about-card i, .help-card i { font-size:1.8rem; color:var(--accent); margin-bottom:0.8rem; display:block; }
+        .about-card h4, .help-card h4 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; color:var(--primary); }
+        .about-card p, .help-card p { font-size:0.86rem; color:var(--text-muted); line-height:1.65; }
+        .help-card a { color:var(--primary); font-weight:600; font-size:0.85rem; text-decoration:none; cursor:pointer; display:inline-block; margin-top:0.5rem; }
+        .help-card a:hover { text-decoration:underline; }
+
+        .faq-list { max-width:800px; margin:0 auto; }
+        .faq-item { background:#fff; border:1px solid var(--border); border-radius:12px; margin-bottom:0.6rem; overflow:hidden; }
+        .faq-question {
+            padding:1.1rem 1.3rem; font-weight:600; font-size:0.92rem; cursor:pointer;
+            display:flex; justify-content:space-between; align-items:center; transition:0.2s;
+        }
+        .faq-question:hover { background:var(--surface-alt); }
+        .faq-question i { transition:transform 0.3s; color:var(--text-muted); font-size:0.72rem; }
+        .faq-item.open .faq-question i { transform:rotate(180deg); }
+        .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.35s ease; padding:0 1.3rem; color:var(--text-muted); font-size:0.86rem; line-height:1.65; }
+        .faq-item.open .faq-answer { max-height:300px; padding:0 1.3rem 1.1rem; }
+
+        /* ================= FOOTER ================= */
+        .footer { background:var(--primary); color:#c5d2e8; padding:2.5rem 5% 1.3rem; margin-top:auto; }
+        .footer-content { display:flex; justify-content:space-between; flex-wrap:wrap; gap:2rem; margin-bottom:1.8rem; }
+        .footer-brand .logo { color:#fff; font-size:1.4rem; margin-bottom:0.7rem; }
+        .footer-brand p { max-width:280px; font-size:0.84rem; opacity:0.85; }
+        .footer-contact { display:flex; flex-direction:column; gap:0.4rem; font-size:0.8rem; margin-top:0.6rem; }
+        .footer-contact .contact-line { display:flex; align-items:center; gap:0.5rem; }
+        .footer-contact .contact-line i { color:var(--accent); width:15px; }
+        .footer-contact .contact-line a { color:#c5d2e8; text-decoration:none; }
+        .footer-contact .contact-line a:hover { color:#fff; }
+        .footer-contact .contact-line.wa a { color:#5be88f; font-weight:600; }
+        .footer-links { display:flex; gap:2.5rem; flex-wrap:wrap; }
+        .footer-links h5 { color:#fff; font-size:0.88rem; margin-bottom:0.7rem; font-weight:600; }
+        .footer-links a { display:block; color:#b6c5dc; text-decoration:none; font-size:0.8rem; margin-bottom:0.45rem; transition:0.2s; cursor:pointer; }
+        .footer-links a:hover { color:#fff; }
+        .footer-bottom { border-top:1px solid rgba(255,255,255,0.15); padding-top:1.1rem; text-align:center; font-size:0.74rem; opacity:0.75; }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width:900px) {
+            .job-detail-body { grid-template-columns:1fr; }
+            .apply-card { position:static; }
+            .profile-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:768px) {
+            body { font-size:14px; }
+            .navbar { flex-wrap:wrap; gap:0.6rem; }
+            .nav-links { gap:0.7rem; }
+            .hero h1 { font-size:2rem; }
+            .hero-stats { gap:1.5rem; }
+            .footer-content { flex-direction:column; }
+            .form-row { grid-template-columns:1fr; }
+            .whatsapp-float { width:50px; height:50px; font-size:1.6rem; bottom:16px; right:16px; }
+            .whatsapp-float .tooltip { display:none; }
+            .contact-bar { justify-content:center; text-align:center; }
+            .search-bar { flex-direction:column; }
+            .search-bar input, .search-bar select, .search-bar button { width:100%; }
+            .profile-header-card { flex-direction:column; text-align:center; }
+            .hero-img-wrap img { height:220px; }
+            .plans-grid { grid-template-columns:1fr; }
+            .balance-card { flex-direction:column; text-align:center; }
+            .balance-amount { font-size:2.5rem; }
+        }
+        @media (max-width:500px) {
+            .hero h1 { font-size:1.7rem; }
+            .hero-stats { flex-direction:column; gap:0.8rem; }
+            .hero { padding:2.2rem 5% 2rem; }
+            .section { padding:2.2rem 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- WHATSAPP FLOAT -->
+    <a href="https://wa.me/254736250002" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="tooltip">Chat: 0736250002</span>
+    </a>
+
+    <!-- ================= AUTH OVERLAY ================= -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>writernet.org</h2>
+                <p>Join the professional writing network</p>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin">Log in</button>
+                <button class="auth-tab" id="tabSignup">Sign up</button>
+            </div>
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email address" required id="loginEmail">
+                </div>
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" required id="loginPassword">
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;"><i class="fas fa-arrow-right-to-bracket"></i> Log in</button>
+                <div class="auth-footer"><a href="#">Forgot password?</a> &nbsp;•&nbsp; <a id="switchToSignup">Create account</a></div>
+            </form>
+            <form class="auth-form" id="signupForm" style="display:none;">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" placeholder="Full name" required id="signupName">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email address" required id="signupEmail">
+                </div>
+                <div class="input-group password-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password (min 6 chars)" required id="signupPassword">
+                    <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;"><i class="fas fa-user-plus"></i> Sign up</button>
+                <div class="auth-footer">Already have an account? <a id="switchToLogin">Log in</a></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= PAGE: HOME ================= -->
+    <div class="page active" id="page-home">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')" class="active">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatar"><i class="fas fa-user"></i><img id="navAvatarImg" src="" alt=""></div>
+                    <span id="displayUserName">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <div class="contact-bar">
+            <div class="contact-item wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">WhatsApp: 0736250002</a></div>
+            <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+            <div class="contact-item"><i class="fas fa-clock"></i><span>Mon–Sat, 8am–8pm</span></div>
+        </div>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-check-circle"></i> Trusted by 12,000+ professional writers</div>
+                <h1>Where words <span>work</span> and writers <span>thrive</span>.</h1>
+                <p>writernet.org connects professional writers with top-tier clients. Build your portfolio, find high-paying gigs, and manage your writing career — all in one place.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="showAuthOverlay()">Get Started Free</button>
+                    <button class="btn-outline" onclick="navigateTo('earnings')">Earn Money</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item"><h3>10,000+</h3><p>Open roles</p></div>
+                    <div class="stat-item"><h3>98%</h3><p>Match rate</p></div>
+                    <div class="stat-item"><h3>$1.2M</h3><p>Paid to writers</p></div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=2073&auto=format&fit=crop" alt="Writer working">
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Why writers choose writernet.org</h2>
+            <p class="section-sub">We've built the tools and community that professional writers actually need to grow their careers.</p>
+            <div class="features-grid">
+                <div class="feature-card"><i class="fas fa-id-card"></i><h4>Verified Profile</h4><p>Showcase your published work, testimonials, and writing specialities to stand out.</p></div>
+                <div class="feature-card"><i class="fas fa-hand-holding-usd"></i><h4>Secure Payments</h4><p>Escrow-protected milestones and instant invoicing so you always get paid.</p></div>
+                <div class="feature-card"><i class="fas fa-file-signature"></i><h4>Smart Contracts</h4><p>Clear terms, deadlines, and revision policies for every project you take on.</p></div>
+                <div class="feature-card"><i class="fas fa-chart-line"></i><h4>Analytics & Growth</h4><p>Track your earnings, job success rate, and profile views in real time.</p></div>
+                <div class="feature-card"><i class="fas fa-coins"></i><h4>Earn Extra Income</h4><p>Watch videos, open links, and complete tasks to earn cash. Withdraw at $50+.</p></div>
+                <div class="feature-card"><i class="fas fa-clock"></i><h4>Time Tracking</h4><p>Log hours for hourly projects and get paid automatically without chasing invoices.</p></div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <h2 class="section-title">How it works</h2>
+            <p class="section-sub">Get started in minutes and land your first writing job today.</p>
+            <div class="features-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+                <div class="feature-card" style="text-align:center;"><i class="fas fa-user-plus" style="font-size:2.2rem;"></i><h4>1. Create your profile</h4><p>Sign up, add your skills, and set your preferred payment method.</p></div>
+                <div class="feature-card" style="text-align:center;"><i class="fas fa-search" style="font-size:2.2rem;"></i><h4>2. Find your fit</h4><p>Browse curated jobs that match your expertise and rate.</p></div>
+                <div class="feature-card" style="text-align:center;"><i class="fas fa-handshake" style="font-size:2.2rem;"></i><h4>3. Get hired & paid</h4><p>Apply, collaborate, and receive secure payments on time.</p></div>
+            </div>
+        </section>
+
+        <section class="section" style="text-align:center;">
+            <h2 class="section-title">Ready to grow your writing career?</h2>
+            <p class="section-sub">Join thousands of professional writers who are already earning more with writernet.org.</p>
+            <button class="btn-primary" style="padding:0.9rem 2.2rem;" onclick="showAuthOverlay()">Join writernet.org</button>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet. Built by writers, for writers.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                    <div><h5>Legal</h5><a href="#">Terms of service</a><a href="#">Privacy policy</a><a href="#">Cookie policy</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved. Made for professional writers.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: EARNINGS ================= -->
+    <div class="page" id="page-earnings">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')" class="active">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarEarnings"><i class="fas fa-user"></i><img id="navAvatarImgEarnings" src="" alt=""></div>
+                    <span id="displayUserNameEarnings">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="earnings-section">
+            <div class="balance-card">
+                <div class="balance-info">
+                    <h3>Your Balance</h3>
+                    <div class="balance-amount" id="balanceDisplay">$0.00</div>
+                    <div class="balance-sub"><i class="fas fa-coins"></i> Earned from videos, links & tasks</div>
+                </div>
+                <div class="withdraw-info">
+                    <p>Withdrawal threshold</p>
+                    <div class="threshold">$50.00</div>
+                    <div class="status" id="withdrawStatus">Keep earning to reach $50</div>
+                </div>
+            </div>
+
+            <div class="earnings-tabs">
+                <button class="earnings-tab active" id="tabVideos">Watch & Earn</button>
+                <button class="earnings-tab" id="tabLinks">Open Links</button>
+                <button class="earnings-tab" id="tabTasks">Tasks</button>
+            </div>
+
+            <!-- Videos Panel -->
+            <div class="earnings-panel active" id="panelVideos">
+                <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1.2rem;">
+                    <i class="fas fa-info-circle" style="color:var(--accent);"></i>
+                    <strong>Important:</strong> You must click <strong>Watch</strong> first to open the video. After watching, come back and click <strong>Claim</strong> — only then will your balance increase. The highest reward is <strong>$3.00</strong> (one video only). Other rewards: $0.98, $0.54, and more.
+                </p>
+                <div class="video-grid">
+                    <!-- Video 1 — $3.00 (highest, one and only) -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/dLNPzHmsk9A" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>writernet.org — Introduction</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$3.00 (highest!)</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/watch?v=dLNPzHmsk9A" target="_blank" class="watch-link" id="watch-vid1" onclick="markWatched('vid1')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-vid1" onclick="earnFromVideo('vid1')" disabled>Claim +$3.00</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 2 — $0.98 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/PLBZJBr-Xeo" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Professional Writing Tips</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.98</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/watch?v=PLBZJBr-Xeo" target="_blank" class="watch-link" id="watch-vid2" onclick="markWatched('vid2')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-vid2" onclick="earnFromVideo('vid2')" disabled>Claim +$0.98</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 3 — $0.54 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/v56FJIzVlTQ" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>How to Land Writing Clients</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.54</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/watch?v=v56FJIzVlTQ" target="_blank" class="watch-link" id="watch-vid3" onclick="markWatched('vid3')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-vid3" onclick="earnFromVideo('vid3')" disabled>Claim +$0.54</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 4 — $1.20 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/3jaxfTLXWt0" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Building Your Writing Portfolio</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$1.20</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/watch?v=3jaxfTLXWt0" target="_blank" class="watch-link" id="watch-vid4" onclick="markWatched('vid4')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-vid4" onclick="earnFromVideo('vid4')" disabled>Claim +$1.20</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Short 1 — $0.25 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/QpBFaXgxdHQ" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Quick Writing Tip #1</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.25</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/shorts/QpBFaXgxdHQ" target="_blank" class="watch-link" id="watch-short1" onclick="markWatched('short1')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-short1" onclick="earnFromVideo('short1')" disabled>Claim +$0.25</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Short 2 — $0.35 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/8VzsB-xrxVw" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Quick Writing Tip #2</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.35</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/shorts/8VzsB-xrxVw" target="_blank" class="watch-link" id="watch-short2" onclick="markWatched('short2')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-short2" onclick="earnFromVideo('short2')" disabled>Claim +$0.35</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Short 3 — $0.15 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/CVOtI4MKtl0" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Quick Writing Tip #3</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.15</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/shorts/CVOtI4MKtl0" target="_blank" class="watch-link" id="watch-short3" onclick="markWatched('short3')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-short3" onclick="earnFromVideo('short3')" disabled>Claim +$0.15</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Short 4 — $0.22 -->
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <iframe src="https://www.youtube.com/embed/fLkLzPf7uY8" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Quick Writing Tip #4</h4>
+                            <span class="reward"><i class="fas fa-dollar-sign"></i> +$0.22</span>
+                            <div class="video-actions">
+                                <a href="https://www.youtube.com/shorts/fLkLzPf7uY8" target="_blank" class="watch-link" id="watch-short4" onclick="markWatched('short4')"><i class="fab fa-youtube"></i> Watch</a>
+                                <button class="btn-earn" id="claim-short4" onclick="earnFromVideo('short4')" disabled>Claim +$0.22</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links Panel -->
+            <div class="earnings-panel" id="panelLinks">
+                <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1.2rem;">
+                    <i class="fas fa-info-circle" style="color:var(--accent);"></i>
+                    Open each link to earn $2 instantly. Each link can only be claimed once.
+                </p>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>writernet.org — Official Website</h4>
+                        <p>Explore the full platform, jobs, and resources.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link1', 'https://writernet.org')">Open & Earn $2</button>
+                </div>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>YouTube Channel — Writing Tips</h4>
+                        <p>Watch more writing tips and tutorials on our channel.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link2', 'https://www.youtube.com/watch?v=dLNPzHmsk9A')">Open & Earn $2</button>
+                </div>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>WhatsApp Support</h4>
+                        <p>Chat with our team directly on WhatsApp.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link3', 'https://wa.me/254736250002')">Open & Earn $2</button>
+                </div>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>Email Support</h4>
+                        <p>Reach out to our team via email for any inquiry.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link4', 'mailto:orgwriternet@gmail.com')">Open & Earn $2</button>
+                </div>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>PayPal — Upgrade to Premium</h4>
+                        <p>Visit PayPal to pay for your premium plan.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link5', 'https://www.paypal.com')">Open & Earn $2</button>
+                </div>
+                <div class="link-card">
+                    <div class="link-info">
+                        <h4>Unsplash — Free Images</h4>
+                        <p>Free high-quality images for your writing projects.</p>
+                        <span class="link-reward"><i class="fas fa-dollar-sign"></i> Earn $2.00</span>
+                    </div>
+                    <button class="btn-earn" onclick="earnFromLink('link6', 'https://unsplash.com')">Open & Earn $2</button>
+                </div>
+            </div>
+
+            <!-- Tasks Panel -->
+            <div class="earnings-panel" id="panelTasks">
+                <div class="task-info-banner">
+                    <i class="fas fa-tasks"></i> <strong>Answer these quick questions to earn small rewards.</strong>
+                    Each correct answer pays between <strong>$0.05 and $0.20</strong>. Total from all tasks is kept well below $50, so you still need to combine activities to reach the withdrawal threshold.
+                </div>
+                <div id="tasksContainer"></div>
+            </div>
+
+            <!-- History -->
+            <div class="earn-history">
+                <h4><i class="fas fa-history" style="color:var(--accent);"></i> Earning History</h4>
+                <div id="historyList">
+                    <div class="earn-history-empty">No earnings yet. Start watching, opening links, or completing tasks above!</div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: JOBS ================= -->
+    <div class="page" id="page-jobs">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')" class="active">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarJobs"><i class="fas fa-user"></i><img id="navAvatarImgJobs" src="" alt=""></div>
+                    <span id="displayUserNameJobs">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <div class="search-wrap">
+            <div class="search-bar">
+                <input type="text" id="jobSearch" placeholder="Search jobs by title, company, or keyword..." oninput="filterJobs()">
+                <select id="jobTypeFilter" onchange="filterJobs()">
+                    <option value="">All types</option>
+                    <option value="remote">Remote</option>
+                    <option value="contract">Contract</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="full-time">Full-time</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="ofm">OFM Chatter</option>
+                </select>
+                <button onclick="filterJobs()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+        <section class="jobs-section">
+            <div class="jobs-meta">
+                <span id="jobCount">Showing 12 of 10,000+ jobs</span>
+                <span><i class="fas fa-filter"></i> Use search & filters to narrow results</span>
+            </div>
+            <div class="jobs-grid" id="jobsGrid"></div>
+            <div style="text-align:center;margin-top:2rem;">
+                <button class="btn-primary" style="padding:0.8rem 2rem;" onclick="loadMoreJobs()"><i class="fas fa-plus-circle"></i> Load more jobs</button>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: PLANS ================= -->
+    <div class="page" id="page-plans">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')" class="active">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarPlans"><i class="fas fa-user"></i><img id="navAvatarImgPlans" src="" alt=""></div>
+                    <span id="displayUserNamePlans">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="plans-section">
+            <div style="text-align:center;">
+                <h2 class="section-title">Choose your plan</h2>
+                <p class="section-sub">Unlock premium access to exclusive jobs, faster responses, and career-boosting tools.</p>
+            </div>
+
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>Monthly</h3>
+                    <p class="plan-desc">Perfect for trying premium access</p>
+                    <div class="plan-price">
+                        <span class="amount">$19</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Access to all premium jobs</li>
+                        <li><i class="fas fa-check-circle"></i> Priority application review</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced profile analytics</li>
+                        <li><i class="fas fa-check-circle"></i> Direct client messaging</li>
+                        <li><i class="fas fa-check-circle"></i> Cancel anytime</li>
+                    </ul>
+                    <button class="btn-paypal" onclick="openPayPal('monthly', 19)">
+                        <i class="fab fa-paypal"></i> Pay $19 / month
+                    </button>
+                    <p class="plan-note"><i class="fas fa-info-circle"></i> Owner is notified after payment. Access is activated within 24 hours.</p>
+                </div>
+
+                <div class="plan-card featured">
+                    <span class="plan-badge">Best Value — Save 35%</span>
+                    <h3>Annual</h3>
+                    <p class="plan-desc">For serious writers who want it all</p>
+                    <div class="plan-price">
+                        <span class="amount">$149</span>
+                        <span class="period">/year</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Everything in Monthly, plus:</li>
+                        <li><i class="fas fa-check-circle"></i> Immediate access after payment</li>
+                        <li><i class="fas fa-check-circle"></i> Featured profile badge</li>
+                        <li><i class="fas fa-check-circle"></i> Early access to new jobs</li>
+                        <li><i class="fas fa-check-circle"></i> Priority WhatsApp support</li>
+                        <li><i class="fas fa-check-circle"></i> 2 months free vs monthly</li>
+                    </ul>
+                    <button class="btn-paypal" onclick="openPayPal('annual', 149)">
+                        <i class="fab fa-paypal"></i> Pay $149 / year
+                    </button>
+                    <p class="plan-note"><i class="fas fa-bolt"></i> Immediate access after payment. Owner is notified to confirm.</p>
+                </div>
+            </div>
+
+            <div style="max-width:700px;margin:2.5rem auto 0;background:#fff;border-radius:16px;padding:1.5rem;border:1px solid var(--border);box-shadow:var(--shadow-sm);">
+                <h4 style="font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:0.6rem;"><i class="fas fa-lock" style="color:var(--accent);"></i> Secure payment via PayPal</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.7;">
+                    All payments are processed securely through PayPal to <strong>vainqueuragevi@gmail.com</strong>.
+                    After you pay, the platform owner is notified instantly to verify your transaction and activate your plan.
+                    Monthly plans are activated within 24 hours. Annual plans receive immediate access.
+                    You will receive a confirmation email once your access is live.
+                </p>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: PAYMENT CONFIRMATION ================= -->
+    <div class="page" id="page-payment-confirm">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')" class="active">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarConfirm"><i class="fas fa-user"></i><img id="navAvatarImgConfirm" src="" alt=""></div>
+                    <span id="displayUserNameConfirm">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="payment-confirm-section">
+            <div class="confirm-card">
+                <div class="confirm-icon"><i class="fas fa-check-circle"></i></div>
+                <h2>Payment Received!</h2>
+                <p>Thank you for choosing writernet.org. Your payment has been processed through PayPal. The platform owner has been notified and will verify your transaction to activate your plan.</p>
+                <div class="confirm-details">
+                    <div class="row"><span class="label">Plan</span><span class="value" id="confirmPlan">—</span></div>
+                    <div class="row"><span class="label">Amount</span><span class="value" id="confirmAmount">—</span></div>
+                    <div class="row"><span class="label">Payment via</span><span class="value">PayPal</span></div>
+                    <div class="row"><span class="label">Paid to</span><span class="value">vainqueuragevi@gmail.com</span></div>
+                    <div class="row"><span class="label">Status</span><span class="value" style="color:var(--accent);">Pending activation</span></div>
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1.2rem;">
+                    <i class="fas fa-info-circle" style="color:var(--accent);"></i>
+                    Monthly plans are activated within 24 hours. Annual plans receive immediate access. You'll be contacted via email once your access is live.
+                </p>
+                <div class="confirm-actions">
+                    <button class="btn-primary" onclick="navigateTo('jobs')"><i class="fas fa-briefcase"></i> Browse Jobs</button>
+                    <button class="btn-outline" onclick="navigateTo('home')"><i class="fas fa-home"></i> Back to Home</button>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: JOB DETAIL ================= -->
+    <div class="page" id="page-job-detail">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')" class="active">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarDetail"><i class="fas fa-user"></i><img id="navAvatarImgDetail" src="" alt=""></div>
+                    <span id="displayUserNameDetail">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="job-detail-section">
+            <div id="jobDetailContent"></div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: PROFILE SETUP ================= -->
+    <div class="page" id="page-setup">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarSetup"><i class="fas fa-user"></i><img id="navAvatarImgSetup" src="" alt=""></div>
+                    <span id="displayUserNameSetup">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="setup-page-section">
+            <div class="setup-page-card">
+                <div class="setup-page-header">
+                    <span class="step-badge">Step 1 of 1</span>
+                    <h2>Build your profile</h2>
+                    <p>Tell us about yourself so we can match you with the best writing jobs.</p>
+                </div>
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="avatarPreview"><i class="fas fa-user"></i><img id="avatarImage" src="" alt="profile"></div>
+                    <div>
+                        <button type="button" class="avatar-upload-btn" id="uploadAvatarBtn"><i class="fas fa-camera"></i> Upload photo</button>
+                        <div class="avatar-hint">Optional — JPG or PNG, max 2MB</div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="field-group"><label>Full name *</label><input type="text" id="profileName" placeholder="Your name" required></div>
+                    <div class="field-group"><label>Professional title</label><input type="text" id="profileTitle" placeholder="e.g. Content Writer"></div>
+                </div>
+                <div class="form-row full"><div class="field-group"><label>Bio</label><textarea id="profileBio" rows="3" placeholder="Tell clients about your writing experience, niche, and style..."></textarea></div></div>
+                <div class="form-row full">
+                    <div class="field-group">
+                        <label>Skills (select all that apply)</label>
+                        <div class="skills-container" id="skillsContainer">
+                            <span class="skill-tag" data-skill="Content Writing">Content Writing</span>
+                            <span class="skill-tag" data-skill="Copywriting">Copywriting</span>
+                            <span class="skill-tag" data-skill="SEO Writing">SEO Writing</span>
+                            <span class="skill-tag" data-skill="Technical Writing">Technical Writing</span>
+                            <span class="skill-tag" data-skill="Editing">Editing</span>
+                            <span class="skill-tag" data-skill="Proofreading">Proofreading</span>
+                            <span class="skill-tag" data-skill="Grant Writing">Grant Writing</span>
+                            <span class="skill-tag" data-skill="Ghostwriting">Ghostwriting</span>
+                            <span class="skill-tag" data-skill="Creative Writing">Creative Writing</span>
+                            <span class="skill-tag" data-skill="OFM Chatter">OFM Chatter</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row full">
+                    <div class="field-group">
+                        <label>Preferred payment method</label>
+                        <div class="payment-options" id="paymentOptions">
+                            <div class="payment-card selected" data-payment="PayPal"><i class="fab fa-paypal"></i><span>PayPal</span></div>
+                            <div class="payment-card" data-payment="Stripe"><i class="fab fa-stripe-s"></i><span>Stripe</span></div>
+                            <div class="payment-card" data-payment="Bank Transfer"><i class="fas fa-university"></i><span>Bank</span></div>
+                            <div class="payment-card" data-payment="Wise"><i class="fas fa-globe"></i><span>Wise</span></div>
+                            <div class="payment-card" data-payment="Payoneer"><i class="fas fa-credit-card"></i><span>Payoneer</span></div>
+                            <div class="payment-card" data-payment="Crypto"><i class="fab fa-bitcoin"></i><span>Crypto</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-actions">
+                    <button class="btn-secondary" id="skipSetupBtn">Skip for now</button>
+                    <button class="btn-setup" id="saveProfileBtn"><i class="fas fa-check-circle"></i> Complete profile</button>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: PROFILE (view) ================= -->
+    <div class="page" id="page-profile">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarProfile"><i class="fas fa-user"></i><img id="navAvatarImgProfile" src="" alt=""></div>
+                    <span id="displayUserNameProfile">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="profile-page-section">
+            <div class="profile-header-card">
+                <div class="profile-avatar-lg" id="profileAvatarLg"><i class="fas fa-user"></i><img id="profileAvatarLgImg" src="" alt=""></div>
+                <div class="profile-info">
+                    <h1 id="profileDisplayName">Writer</h1>
+                    <div class="title" id="profileDisplayTitle">Professional Writer</div>
+                    <div class="email" id="profileDisplayEmail"><i class="fas fa-envelope"></i> email@example.com</div>
+                </div>
+            </div>
+            <div class="profile-grid">
+                <div class="profile-panel">
+                    <h3><i class="fas fa-user-circle"></i> About</h3>
+                    <p id="profileDisplayBio">No bio added yet. Complete your profile to tell clients about yourself.</p>
+                </div>
+                <div class="profile-panel">
+                    <h3><i class="fas fa-tags"></i> Skills</h3>
+                    <div class="profile-skills" id="profileDisplaySkills"><span class="profile-empty">No skills selected yet.</span></div>
+                </div>
+                <div class="profile-panel">
+                    <h3><i class="fas fa-info-circle"></i> Account Details</h3>
+                    <div class="profile-detail-row"><span class="label">Full Name</span><span class="value" id="profileDetailName">—</span></div>
+                    <div class="profile-detail-row"><span class="label">Email</span><span class="value" id="profileDetailEmail">—</span></div>
+                    <div class="profile-detail-row"><span class="label">Professional Title</span><span class="value" id="profileDetailTitle">—</span></div>
+                    <div class="profile-detail-row"><span class="label">Member Since</span><span class="value" id="profileDetailJoined">—</span></div>
+                </div>
+                <div class="profile-panel">
+                    <h3><i class="fas fa-credit-card"></i> Payment Method</h3>
+                    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.8rem;">Your preferred method for receiving payments from completed projects.</p>
+                    <div class="profile-detail-row"><span class="label">Selected Method</span><span class="value" id="profileDetailPayment">—</span></div>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <button class="btn-primary" onclick="navigateTo('setup')"><i class="fas fa-edit"></i> Edit Profile</button>
+                <button class="btn-outline" onclick="navigateTo('jobs')"><i class="fas fa-briefcase"></i> Browse Jobs</button>
+                <button class="btn-outline" onclick="navigateTo('plans')"><i class="fas fa-crown"></i> Upgrade Plan</button>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: ABOUT ================= -->
+    <div class="page" id="page-about">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')" class="active">About</a>
+                <a onclick="navigateTo('help')">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarAbout"><i class="fas fa-user"></i><img id="navAvatarImgAbout" src="" alt=""></div>
+                    <span id="displayUserNameAbout">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="about-section">
+            <div style="text-align:center;margin-bottom:2.2rem;">
+                <h2 class="section-title">About writernet.org</h2>
+                <p class="section-sub" style="max-width:600px;margin:0 auto;">We're building the world's most trusted platform for professional writers.</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card"><i class="fas fa-bullseye"></i><h4>Our Mission</h4><p>To empower professional writers with the tools, community, and opportunities they need to build sustainable careers. We believe great writing deserves great compensation.</p></div>
+                <div class="about-card"><i class="fas fa-eye"></i><h4>Our Vision</h4><p>A world where every talented writer can find meaningful work, fair pay, and a supportive network — regardless of where they live.</p></div>
+                <div class="about-card"><i class="fas fa-heart"></i><h4>Our Values</h4><p>Transparency, quality, and respect for the craft. We vet every job and every writer so both sides can trust the platform.</p></div>
+            </div>
+            <div style="text-align:center;margin:2rem 0 1rem;">
+                <h3 class="section-title" style="font-size:1.3rem;">The team behind writernet.org</h3>
+                <p class="section-sub">Writers, engineers, and editors working together.</p>
+            </div>
+            <div class="about-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+                <div class="about-card" style="text-align:center;"><div style="width:64px;height:64px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--primary);margin:0 auto 0.8rem;"><i class="fas fa-user"></i></div><h4>Rachel Kim</h4><div style="font-size:0.76rem;color:var(--accent);font-weight:700;margin-bottom:0.3rem;">Co-founder & CEO</div><p style="font-size:0.8rem;">Former editor at The Atlantic. 15 years in publishing.</p></div>
+                <div class="about-card" style="text-align:center;"><div style="width:64px;height:64px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--primary);margin:0 auto 0.8rem;"><i class="fas fa-user"></i></div><h4>Marcus Johnson</h4><div style="font-size:0.76rem;color:var(--accent);font-weight:700;margin-bottom:0.3rem;">Co-founder & CTO</div><p style="font-size:0.8rem;">Built platforms for Upwork and Fiverr.</p></div>
+                <div class="about-card" style="text-align:center;"><div style="width:64px;height:64px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--primary);margin:0 auto 0.8rem;"><i class="fas fa-user"></i></div><h4>Priya Sharma</h4><div style="font-size:0.76rem;color:var(--accent);font-weight:700;margin-bottom:0.3rem;">Head of Community</div><p style="font-size:0.8rem;">Writer and community builder. Previously at Medium.</p></div>
+                <div class="about-card" style="text-align:center;"><div style="width:64px;height:64px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--primary);margin:0 auto 0.8rem;"><i class="fas fa-user"></i></div><h4>Daniel Osei</h4><div style="font-size:0.76rem;color:var(--accent);font-weight:700;margin-bottom:0.3rem;">Head of Product</div><p style="font-size:0.8rem;">Product leader focused on user experience.</p></div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <!-- ================= PAGE: HELP ================= -->
+    <div class="page" id="page-help">
+        <nav class="navbar">
+            <div class="logo" onclick="navigateTo('home')"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+            <div class="nav-links">
+                <a onclick="navigateTo('home')">Home</a>
+                <a onclick="navigateTo('jobs')">Jobs</a>
+                <a onclick="navigateTo('earnings')">Earnings</a>
+                <a onclick="navigateTo('plans')">Plans</a>
+                <a onclick="navigateTo('about')">About</a>
+                <a onclick="navigateTo('help')" class="active">Help</a>
+                <div class="user-badge" onclick="navigateTo('profile')">
+                    <div class="user-avatar-sm" id="navAvatarHelp"><i class="fas fa-user"></i><img id="navAvatarImgHelp" src="" alt=""></div>
+                    <span id="displayUserNameHelp">Writer</span>
+                </div>
+                <button class="logout-btn" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+        <section class="help-section">
+            <div style="text-align:center;margin-bottom:2.2rem;">
+                <h2 class="section-title">Help center</h2>
+                <p class="section-sub" style="max-width:600px;margin:0 auto;">Find answers to common questions or get in touch with our support team.</p>
+            </div>
+            <div class="help-grid">
+                <div class="help-card"><i class="fas fa-rocket"></i><h4>Getting Started</h4><p>Learn how to create your profile, find jobs, and land your first client.</p><a onclick="navigateTo('setup')">Read guide →</a></div>
+                <div class="help-card"><i class="fas fa-coins"></i><h4>Earnings & Withdrawals</h4><p>Earn cash by watching videos, opening links, and completing tasks. Withdrawals available at $50+.</p><a onclick="navigateTo('earnings')">Start earning →</a></div>
+                <div class="help-card"><i class="fas fa-crown"></i><h4>Plans & Upgrades</h4><p>Compare monthly and annual plans, and learn how access is activated after payment.</p><a onclick="navigateTo('plans')">View plans →</a></div>
+                <div class="help-card"><i class="fas fa-credit-card"></i><h4>Payments & Billing</h4><p>Everything about payment methods, invoices, and getting paid on time.</p><a href="mailto:orgwriternet@gmail.com?subject=Payment%20Inquiry">Learn more →</a></div>
+                <div class="help-card"><i class="fas fa-user-shield"></i><h4>Account & Security</h4><p>Manage your account settings, password, and privacy preferences.</p><a onclick="navigateTo('profile')">View profile →</a></div>
+                <div class="help-card"><i class="fas fa-envelope"></i><h4>Contact Support</h4><p>Can't find what you need? Our support team responds within 24 hours.</p><a href="mailto:orgwriternet@gmail.com">Email us →</a></div>
+            </div>
+            <div style="margin-top:1.5rem;">
+                <h3 class="section-title" style="font-size:1.3rem;text-align:center;">Frequently asked questions</h3>
+                <p class="section-sub" style="text-align:center;">Quick answers to the most common questions.</p>
+                <div class="faq-list">
+                    <div class="faq-item"><div class="faq-question">How do I earn money on writernet.org? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>You can earn by watching our YouTube videos (each pays between $0.15 and $3.00 — the $3.00 is the highest and one-time only), opening partner links ($2 each), and completing short tasks ($0.05–$0.20 per correct answer). Visit the Earnings page to get started. Withdrawals are available once your balance reaches $50 or more.</p></div></div>
+                    <div class="faq-item"><div class="faq-question">What is the highest video reward? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>The highest single video reward is $3.00, and only one video offers this amount. Other videos pay $0.98, $0.54, $1.20, and smaller amounts for shorts. You must click "Watch" first, then "Claim" — only then does your balance increase.</p></div></div>
+                    <div class="faq-item"><div class="faq-question">How much can I earn from tasks? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Each task pays a small amount between $0.05 and $0.20 per correct answer. The total from all tasks is deliberately kept well below $50, so you still need to combine videos, links, and tasks to reach the withdrawal threshold.</p></div></div>
+                    <div class="faq-item"><div class="faq-question">How do I withdraw my earnings? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Withdrawals are only available when your balance reaches $50.00 or above. Contact support via WhatsApp or email to request a withdrawal once you hit the threshold.</p></div></div>
+                    <div class="faq-item"><div class="faq-question">How do I upgrade to a premium plan? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Go to the Plans page, choose Monthly or Annual, and pay securely via PayPal to vainqueuragevi@gmail.com. The owner is notified after payment to activate your access. Monthly plans activate within 24 hours; annual plans receive immediate access.</p></div></div>
+                    <div class="faq-item"><div class="faq-question">Can I work with clients outside my country? <i class="fas fa-chevron-down"></i></div><div class="faq-answer"><p>Yes! writernet.org is a global platform. Our payment methods support international transactions.</p></div></div>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fas fa-pen-fancy"></i><span>writernet.org</span></div>
+                    <p>Where professional writers and great opportunities meet.</p>
+                    <div class="footer-contact">
+                        <div class="contact-line wa"><i class="fab fa-whatsapp"></i><a href="https://wa.me/254736250002" target="_blank">0736250002</a></div>
+                        <div class="contact-line"><i class="fas fa-envelope"></i><a href="mailto:orgwriternet@gmail.com">orgwriternet@gmail.com</a></div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div><h5>Platform</h5><a onclick="navigateTo('jobs')">Job board</a><a onclick="navigateTo('earnings')">Earnings</a><a onclick="navigateTo('plans')">Pricing plans</a><a onclick="navigateTo('about')">About us</a><a onclick="navigateTo('help')">Help center</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 writernet.org — all rights reserved.</div>
+        </footer>
+    </div>
+
+    <script>
+        // ================= PASSWORD TOGGLE =================
+        window.togglePassword = function(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        };
+
+        // ================= LOCALSTORAGE USER "DATABASE" =================
+        function getUsers() {
+            try { return JSON.parse(localStorage.getItem('writernet_users') || '{}'); }
+            catch { return {}; }
+        }
+        function saveUsers(users) {
+            localStorage.setItem('writernet_users', JSON.stringify(users));
+        }
+
+        // ================= EARNINGS STORAGE =================
+        function getEarnings(email) {
+            try {
+                const all = JSON.parse(localStorage.getItem('writernet_earnings') || '{}');
+                return all[email] || { balance: 0, history: [], claimed: [], watched: [] };
+            } catch { return { balance: 0, history: [], claimed: [], watched: [] }; }
+        }
+        function saveEarnings(email, data) {
+            try {
+                const all = JSON.parse(localStorage.getItem('writernet_earnings') || '{}');
+                all[email] = data;
+                localStorage.setItem('writernet_earnings', JSON.stringify(all));
+            } catch {}
+        }
+
+        // ================= STATE =================
+        let currentUser = {
+            name: '', email: '', title: '', bio: '', skills: [],
+            paymentMethod: 'PayPal', avatarDataUrl: null, joined: '',
+            plan: 'none', planActivated: false
+        };
+        let isLoggedIn = false;
+        let allJobs = [];
+        let displayedCount = 12;
+        let currentJob = null;
+        let currentEarnings = { balance: 0, history: [], claimed: [], watched: [] };
+
+        // ================= JOB DATA =================
+        const jobTitles = [
+            'Senior Content Writer','Copywriter (SaaS)','Editor / Proofreader','Technical Writer',
+            'SEO Blog Writer','Grant Writer','Ghostwriter','Content Strategist','OFM Chatter',
+            'Social Media Writer','Email Copywriter','UX Writer','Scriptwriter','Academic Writer',
+            'Creative Writer','Legal Writer','Medical Writer','Travel Writer','Food Writer',
+            'Finance Writer','Sports Writer','Tech Blogger','Newsletter Writer','Product Copywriter',
+            'Landing Page Writer','White Paper Writer','Case Study Writer','Press Release Writer',
+            'Video Script Writer','Podcast Script Writer','Ad Copywriter','Sales Page Writer',
+            'Blog Post Writer','Article Writer','Feature Writer','Columnist','Essay Writer',
+            'Resume Writer','Cover Letter Writer','LinkedIn Profile Writer','Bio Writer',
+            'Speech Writer','Presentation Writer','Manual Writer','Documentation Writer'
+        ];
+        const companies = ['Medium','Stripe','The New Yorker','GitHub','HubSpot','Charity: water','Notion','Figma','Slack','Shopify','Buffer','Ghost','Substack','ConvertKit','Ahrefs','Semrush','Moz','Canva','Webflow','Squarespace'];
+        const types = ['Remote','Contract','Freelance','Full-time','Part-time','OFM Chatter'];
+        const rates = ['$35','$40','$45','$50','$55','$60','$65','$70','$75','$80','$85','$90','$100'];
+        const descs = [
+            'Create high-quality content for a growing audience. Research, write, and edit articles on various topics.',
+            'Develop compelling copy for marketing campaigns, landing pages, and email sequences.',
+            'Edit and proofread long-form content. Ensure consistency, clarity, and adherence to style guides.',
+            'Write technical documentation, API guides, and tutorials for developer audiences.',
+            'Produce SEO-optimized blog posts. Conduct keyword research and implement on-page SEO best practices.',
+            'Craft grant proposals and reports for nonprofit organizations. Research funding opportunities.',
+            'Write books, memoirs, or thought leadership content on behalf of clients.',
+            'Chat with fans and customers on behalf of creators. Engage, build rapport, and drive sales.',
+            'Manage social media content creation and scheduling across multiple platforms.',
+            'Write email marketing campaigns that convert. A/B test subject lines and body copy.'
+        ];
+
+        function generateJobs(count) {
+            const jobs = [];
+            for (let i = 1; i <= count; i++) {
+                const title = jobTitles[Math.floor(Math.random() * jobTitles.length)];
+                const company = companies[Math.floor(Math.random() * companies.length)];
+                const type = types[Math.floor(Math.random() * types.length)];
+                const rate = rates[Math.floor(Math.random() * rates.length)];
+                const desc = descs[Math.floor(Math.random() * descs.length)];
+                jobs.push({
+                    id: i, title, company, type, rate, desc,
+                    icon: company.charAt(0).toUpperCase(),
+                    posted: `${Math.floor(Math.random() * 14) + 1} days ago`,
+                    location: Math.random() > 0.5 ? 'Remote' : 'Hybrid',
+                    requirements: [
+                        'Proven experience in professional writing',
+                        'Excellent research and communication skills',
+                        'Ability to meet deadlines consistently',
+                        'Portfolio of published work required',
+                        'Familiarity with SEO best practices (preferred)'
+                    ]
+                });
+            }
+            return jobs;
+        }
+        allJobs = generateJobs(200);
+
+        // ================= TASK DATA (bulk small questions) =================
+        // Total of all task rewards is intentionally kept small (well under $50).
+        const TASKS = [
+            { id:'t1', question:'Which of these is a type of writing?', options:['Copywriting','Welding','Bricklaying','Plumbing'], correct:0, reward:0.10 },
+            { id:'t2', question:'What does "SEO" stand for?', options:['Search Engine Optimization','Simple Email Output','Social Engagement Online','Standard Editing Operations'], correct:0, reward:0.12 },
+            { id:'t3', question:'A "ghostwriter" is someone who…', options:['Writes for someone else without credit','Writes only horror stories','Edits audio books','Designs book covers'], correct:0, reward:0.08 },
+            { id:'t4', question:'Which punctuation is used to end a question?', options:['?','.','!',';'], correct:0, reward:0.05 },
+            { id:'t5', question:'A "proofreader" mainly checks for…', options:['Grammar and spelling errors','Illustrations','Font sizes','Page numbers'], correct:0, reward:0.07 },
+            { id:'t6', question:'What is a "byline"?', options:['The author credit on an article','A railway line','A type of font','A paragraph style'], correct:0, reward:0.09 },
+            { id:'t7', question:'Which is a common writing format?', options:['MLA','MP3','PDF','JPG'], correct:0, reward:0.06 },
+            { id:'t8', question:'What does "CTA" mean in copywriting?', options:['Call To Action','Copy Text Area','Creative Text Analysis','Content Testing Approach'], correct:0, reward:0.11 },
+            { id:'t9', question:'A "grant writer" usually writes for…', options:['Nonprofit organizations','Video games','Restaurants','Car dealers'], correct:0, reward:0.14 },
+            { id:'t10', question:'Which is a synonym for "edit"?', options:['Revise','Delete','Ignore','Copy'], correct:0, reward:0.08 },
+            { id:'t11', question:'What is "tone" in writing?', options:['The attitude of the writer','The color of the paper','The length of the text','The font style'], correct:0, reward:0.10 },
+            { id:'t12', question:'What is a "draft"?', options:['An early version of a piece of writing','A type of beer','A final publication','A grammar rule'], correct:0, reward:0.06 },
+            { id:'t13', question:'Which is NOT a writing skill?', options:['Welding','Research','Outlining','Editing'], correct:0, reward:0.09 },
+            { id:'t14', question:'What does "plagiarism" mean?', options:['Using someone else\'s work without credit','Writing in a foreign language','Publishing anonymously','Writing very quickly'], correct:0, reward:0.13 },
+            { id:'t15', question:'A "white paper" is typically…', options:['An in-depth report on a topic','A blank sheet of paper','A short poem','A news headline'], correct:0, reward:0.15 },
+            { id:'t16', question:'What is a "headline"?', options:['The title of an article','The last sentence','A footnote','A quote'], correct:0, reward:0.05 },
+            { id:'t17', question:'Which is a writing platform?', options:['Medium','Spotify','Netflix','Uber'], correct:0, reward:0.07 },
+            { id:'t18', question:'What is "word count"?', options:['The number of words in a text','A bank statement','A font size','A page margin'], correct:0, reward:0.06 },
+            { id:'t19', question:'A "brief" in writing is…', options:['A set of instructions for a project','A short story','A type of poem','A book cover'], correct:0, reward:0.10 },
+            { id:'t20', question:'What is "copy editing"?', options:['Fixing grammar and style','Designing graphics','Recording audio','Printing books'], correct:0, reward:0.12 },
+            { id:'t21', question:'Which is a common writing niche?', options:['Finance','Astronomy','Cooking','Gardening'], correct:0, reward:0.08 },
+            { id:'t22', question:'What does "brief" mean in a client project?', options:['A summary of requirements','A long novel','A deadline','A payment'], correct:0, reward:0.09 },
+            { id:'t23', question:'What is a "portfolio" for a writer?', options:['A collection of their best work','A type of suitcase','A book cover','A payment method'], correct:0, reward:0.11 },
+            { id:'t24', question:'Which is NOT a form of writing?', options:['Dancing','Blogging','Copywriting','Journalism'], correct:0, reward:0.05 },
+            { id:'t25', question:'What is a "lead" in journalism?', options:['The opening sentence of a story','A metal pipe','A type of pen','A headline'], correct:0, reward:0.10 }
+        ];
+        // Sum of all rewards = $2.31 (well below $50)
+
+        // ================= AUTH TABS =================
+        document.getElementById('tabLogin').addEventListener('click', () => {
+            document.getElementById('loginForm').style.display = 'flex';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('tabLogin').classList.add('active');
+            document.getElementById('tabSignup').classList.remove('active');
+        });
+        document.getElementById('tabSignup').addEventListener('click', () => {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'flex';
+            document.getElementById('tabSignup').classList.add('active');
+            document.getElementById('tabLogin').classList.remove('active');
+        });
+        document.getElementById('switchToSignup').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('tabSignup').click(); });
+        document.getElementById('switchToLogin').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('tabLogin').click(); });
+
+        // ================= LOGIN (instant) =================
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value.trim();
+            if (!email || !password) { alert('Please enter email and password.'); return; }
+
+            const users = getUsers();
+            if (!users[email]) {
+                alert('❌ This email has not signed up yet. Please create an account first.');
+                return;
+            }
+            if (users[email].password !== password) {
+                alert('❌ Incorrect password. Please try again.');
+                return;
+            }
+
+            currentUser.name = users[email].name;
+            currentUser.email = email;
+            currentUser.joined = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+            currentEarnings = getEarnings(email);
+            isLoggedIn = true;
+
+            document.getElementById('authOverlay').classList.add('hidden');
+            updateUserUI();
+            updateBalanceUI();
+            renderTasks();
+            navigateTo('home');
+        });
+
+        // ================= SIGNUP (automatic) =================
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const password = document.getElementById('signupPassword').value.trim();
+            if (!name || !email || !password) { alert('Please fill all fields.'); return; }
+            if (password.length < 6) { alert('Password must be at least 6 characters.'); return; }
+
+            const users = getUsers();
+            if (users[email]) {
+                alert('❌ This email is already registered. Please log in instead.');
+                return;
+            }
+
+            users[email] = { name, password };
+            saveUsers(users);
+
+            currentUser.name = name;
+            currentUser.email = email;
+            currentUser.joined = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+            currentEarnings = getEarnings(email);
+            document.getElementById('profileName').value = name;
+            isLoggedIn = true;
+
+            document.getElementById('authOverlay').classList.add('hidden');
+            updateUserUI();
+            updateBalanceUI();
+            renderTasks();
+            navigateTo('setup');
+        });
+
+        // ================= LOGOUT =================
+        window.logoutUser = function() {
+            if (!confirm('Are you sure you want to log out?')) return;
+            isLoggedIn = false;
+            currentUser = {
+                name: '', email: '', title: '', bio: '', skills: [],
+                paymentMethod: 'PayPal', avatarDataUrl: null, joined: '',
+                plan: 'none', planActivated: false
+            };
+            currentEarnings = { balance: 0, history: [], claimed: [], watched: [] };
+            document.getElementById('loginForm').reset();
+            document.getElementById('signupForm').reset();
+            document.getElementById('authOverlay').classList.remove('hidden');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-home').classList.add('active');
+            window.scrollTo(0, 0);
+        };
+
+        // ================= AVATAR =================
+        document.getElementById('uploadAvatarBtn').addEventListener('click', () => document.getElementById('avatarInput').click());
+        document.getElementById('avatarInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB.'); return; }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentUser.avatarDataUrl = ev.target.result;
+                document.getElementById('avatarImage').src = ev.target.result;
+                document.getElementById('avatarPreview').classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // ================= SKILLS =================
+        document.getElementById('skillsContainer').addEventListener('click', (e) => {
+            const tag = e.target.closest('.skill-tag');
+            if (tag) tag.classList.toggle('selected');
+        });
+
+        // ================= PAYMENT =================
+        document.getElementById('paymentOptions').addEventListener('click', (e) => {
+            const card = e.target.closest('.payment-card');
+            if (!card) return;
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            currentUser.paymentMethod = card.dataset.payment;
+        });
+
+        // ================= SAVE PROFILE =================
+        document.getElementById('saveProfileBtn').addEventListener('click', () => {
+            const name = document.getElementById('profileName').value.trim();
+            if (!name) { alert('Please enter your full name.'); return; }
+            currentUser.name = name;
+            currentUser.title = document.getElementById('profileTitle').value.trim();
+            currentUser.bio = document.getElementById('profileBio').value.trim();
+            currentUser.skills = [];
+            document.querySelectorAll('.skill-tag.selected').forEach(t => currentUser.skills.push(t.dataset.skill));
+            const selPay = document.querySelector('.payment-card.selected');
+            if (selPay) currentUser.paymentMethod = selPay.dataset.payment;
+            updateUserUI();
+            navigateTo('profile');
+        });
+
+        document.getElementById('skipSetupBtn').addEventListener('click', () => {
+            updateUserUI();
+            navigateTo('home');
+        });
+
+        // ================= EARNINGS: TABS =================
+        document.getElementById('tabVideos').addEventListener('click', () => {
+            document.getElementById('tabVideos').classList.add('active');
+            document.getElementById('tabLinks').classList.remove('active');
+            document.getElementById('tabTasks').classList.remove('active');
+            document.getElementById('panelVideos').classList.add('active');
+            document.getElementById('panelLinks').classList.remove('active');
+            document.getElementById('panelTasks').classList.remove('active');
+        });
+        document.getElementById('tabLinks').addEventListener('click', () => {
+            document.getElementById('tabLinks').classList.add('active');
+            document.getElementById('tabVideos').classList.remove('active');
+            document.getElementById('tabTasks').classList.remove('active');
+            document.getElementById('panelLinks').classList.add('active');
+            document.getElementById('panelVideos').classList.remove('active');
+            document.getElementById('panelTasks').classList.remove('active');
+        });
+        document.getElementById('tabTasks').addEventListener('click', () => {
+            document.getElementById('tabTasks').classList.add('active');
+            document.getElementById('tabVideos').classList.remove('active');
+            document.getElementById('tabLinks').classList.remove('active');
+            document.getElementById('panelTasks').classList.add('active');
+            document.getElementById('panelVideos').classList.remove('active');
+            document.getElementById('panelLinks').classList.remove('active');
+        });
+
+        // ================= VIDEO REWARDS =================
+        const VIDEO_REWARDS = {
+            vid1: 3.00, vid2: 0.98, vid3: 0.54, vid4: 1.20,
+            short1: 0.25, short2: 0.35, short3: 0.15, short4: 0.22
+        };
+
+        // Mark video as watched (called when Watch link is clicked)
+        window.markWatched = function(videoId) {
+            if (!isLoggedIn) { document.getElementById('authOverlay').classList.remove('hidden'); return; }
+            if (!currentEarnings.watched.includes(videoId)) {
+                currentEarnings.watched.push(videoId);
+                saveEarnings(currentUser.email, currentEarnings);
+            }
+            const watchLink = document.getElementById('watch-' + videoId);
+            const claimBtn = document.getElementById('claim-' + videoId);
+            if (watchLink) watchLink.classList.add('watched');
+            if (claimBtn && !currentEarnings.claimed.includes(videoId)) {
+                claimBtn.disabled = false;
+                claimBtn.textContent = 'Claim +$' + VIDEO_REWARDS[videoId].toFixed(2);
+            }
+        };
+
+        window.earnFromVideo = function(videoId) {
+            if (!isLoggedIn) { document.getElementById('authOverlay').classList.remove('hidden'); return; }
+            if (currentEarnings.claimed.includes(videoId)) {
+                alert('You have already claimed this video reward.');
+                return;
+            }
+            if (!currentEarnings.watched.includes(videoId)) {
+                alert('⚠️ You must click "Watch" first to open the video before claiming.');
+                return;
+            }
+            const reward = VIDEO_REWARDS[videoId];
+            if (reward === undefined) return;
+
+            currentEarnings.balance = parseFloat((currentEarnings.balance + reward).toFixed(2));
+            currentEarnings.claimed.push(videoId);
+            currentEarnings.history.unshift({
+                type: 'video',
+                desc: `Watched video — earned $${reward.toFixed(2)}${videoId === 'vid1' ? ' (highest reward!)' : ''}`,
+                amount: reward,
+                date: new Date().toLocaleString()
+            });
+            saveEarnings(currentUser.email, currentEarnings);
+            updateBalanceUI();
+
+            const claimBtn = document.getElementById('claim-' + videoId);
+            if (claimBtn) {
+                claimBtn.disabled = true;
+                claimBtn.textContent = '✓ Claimed';
+                claimBtn.style.background = '#9ca3af';
+            }
+            const watchLink = document.getElementById('watch-' + videoId);
+            if (watchLink) watchLink.style.opacity = '0.6';
+
+            alert(`✅ You earned $${reward.toFixed(2)} for watching!\n\nNew balance: $${currentEarnings.balance.toFixed(2)}`);
+        };
+
+        // ================= LINK REWARDS =================
+        window.earnFromLink = function(linkId, url) {
+            if (!isLoggedIn) { document.getElementById('authOverlay').classList.remove('hidden'); return; }
+            if (currentEarnings.claimed.includes(linkId)) {
+                alert('You have already claimed this link reward.');
+                return;
+            }
+            window.open(url, '_blank');
+            currentEarnings.balance = parseFloat((currentEarnings.balance + 2).toFixed(2));
+            currentEarnings.claimed.push(linkId);
+            currentEarnings.history.unshift({
+                type: 'link',
+                desc: 'Opened partner link — earned $2.00',
+                amount: 2,
+                date: new Date().toLocaleString()
+            });
+            saveEarnings(currentUser.email, currentEarnings);
+            updateBalanceUI();
+            alert(`✅ You earned $2.00 for opening the link!\n\nNew balance: $${currentEarnings.balance.toFixed(2)}`);
+        };
+
+        // ================= TASKS =================
+        let taskAnswers = {}; // { taskId: selectedOptionIndex }
+
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            if (!container) return;
+
+            container.innerHTML = TASKS.map(task => {
+                const claimed = currentEarnings.claimed.includes(task.id);
+                const answered = taskAnswers[task.id] !== undefined;
+                return `
+                    <div class="task-card" id="task-${task.id}">
+                        <div class="task-header">
+                            <div class="task-title">${task.question}</div>
+                            <span class="task-reward"><i class="fas fa-dollar-sign"></i> +$${task.reward.toFixed(2)}</span>
+                        </div>
+                        <div class="task-options">
+                            ${task.options.map((opt, idx) => `
+                                <label class="task-option ${taskAnswers[task.id] === idx ? 'selected' : ''} ${claimed ? (idx === task.correct ? 'correct' : '') : ''}">
+                                    <input type="radio" name="task-${task.id}" value="${idx}" 
+                                        ${taskAnswers[task.id] === idx ? 'checked' : ''} 
+                                        ${claimed ? 'disabled' : ''}
+                                        onchange="selectTaskOption('${task.id}', ${idx})">
+                                    ${opt}
+                                </label>
+                            `).join('')}
+                        </div>
+                        ${claimed 
+                            ? `<div class="task-result" style="color:var(--success);"><i class="fas fa-check-circle"></i> Completed — earned $${task.reward.toFixed(2)}</div>`
+                            : `<button class="task-submit" id="submit-${task.id}" onclick="submitTask('${task.id}')" ${answered ? '' : 'disabled'}>Submit Answer</button>
+                               <div class="task-result" id="result-${task.id}"></div>`
+                        }
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectTaskOption = function(taskId, optionIdx) {
+            taskAnswers[taskId] = optionIdx;
+            const card = document.getElementById('task-' + taskId);
+            if (!card) return;
+            card.querySelectorAll('.task-option').forEach((el, idx) => {
+                el.classList.toggle('selected', idx === optionIdx);
+            });
+            const submitBtn = document.getElementById('submit-' + taskId);
+            if (submitBtn) submitBtn.disabled = false;
+        };
+
+        window.submitTask = function(taskId) {
+            if (!isLoggedIn) { document.getElementById('authOverlay').classList.remove('hidden'); return; }
+            if (currentEarnings.claimed.includes(taskId)) {
+                alert('You have already completed this task.');
+                return;
+            }
+            const task = TASKS.find(t => t.id === taskId);
+            if (!task) return;
+            const selected = taskAnswers[taskId];
+            if (selected === undefined) {
+                alert('Please select an answer first.');
+                return;
+            }
+
+            const card = document.getElementById('task-' + taskId);
+            const resultEl = document.getElementById('result-' + taskId);
+            const submitBtn = document.getElementById('submit-' + taskId);
+
+            if (selected === task.correct) {
+                // Correct — award money
+                currentEarnings.balance = parseFloat((currentEarnings.balance + task.reward).toFixed(2));
+                currentEarnings.claimed.push(taskId);
+                currentEarnings.history.unshift({
+                    type: 'task',
+                    desc: `Task completed — earned $${task.reward.toFixed(2)}`,
+                    amount: task.reward,
+                    date: new Date().toLocaleString()
+                });
+                saveEarnings(currentUser.email, currentEarnings);
+                updateBalanceUI();
+
+                if (resultEl) resultEl.innerHTML = `<span style="color:var(--success);"><i class="fas fa-check-circle"></i> Correct! +$${task.reward.toFixed(2)} added to your balance.</span>`;
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '✓ Correct'; }
+                // Mark correct option
+                card.querySelectorAll('.task-option').forEach((el, idx) => {
+                    if (idx === task.correct) el.classList.add('correct');
+                    el.querySelector('input').disabled = true;
+                });
+                setTimeout(() => alert(`✅ Correct! You earned $${task.reward.toFixed(2)}.\n\nNew balance: $${currentEarnings.balance.toFixed(2)}`), 400);
+            } else {
+                // Wrong — no money, but mark
+                if (resultEl) resultEl.innerHTML = `<span style="color:var(--danger);"><i class="fas fa-times-circle"></i> Wrong answer. Try again!</span>`;
+                card.querySelectorAll('.task-option').forEach((el, idx) => {
+                    if (idx === selected) el.classList.add('wrong');
+                });
+                // Reset selection after 1.5s
+                setTimeout(() => {
+                    delete taskAnswers[taskId];
+                    card.querySelectorAll('.task-option').forEach(el => {
+                        el.classList.remove('wrong', 'selected');
+                        el.querySelector('input').checked = false;
+                    });
+                    if (submitBtn) submitBtn.disabled = true;
+                    if (resultEl) resultEl.innerHTML = '';
+                }, 1500);
+            }
+        };
+
+        // ================= UPDATE BALANCE UI =================
+        function updateBalanceUI() {
+            const display = document.getElementById('balanceDisplay');
+            const status = document.getElementById('withdrawStatus');
+            const historyList = document.getElementById('historyList');
+            if (!display) return;
+
+            display.textContent = '$' + currentEarnings.balance.toFixed(2);
+
+            if (currentEarnings.balance >= 50) {
+                status.innerHTML = '<span style="color:#5be88f;font-weight:700;">✅ Withdrawal available! Contact support.</span>';
+            } else {
+                const remaining = (50 - currentEarnings.balance).toFixed(2);
+                status.textContent = `Earn $${remaining} more to reach $50`;
+            }
+
+            if (currentEarnings.history.length > 0) {
+                historyList.innerHTML = currentEarnings.history.slice(0, 30).map(item => {
+                    let icon = 'link';
+                    if (item.type === 'video') icon = 'play-circle';
+                    if (item.type === 'task') icon = 'tasks';
+                    return `
+                        <div class="earn-history-item">
+                            <div class="desc"><i class="fas fa-${icon}"></i> ${item.desc}</div>
+                            <div class="amount">+$${item.amount.toFixed(2)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                historyList.innerHTML = '<div class="earn-history-empty">No earnings yet. Start watching, opening links, or completing tasks above!</div>';
+            }
+        }
+
+        // ================= PAYPAL PAYMENT =================
+        window.openPayPal = function(planType, amount) {
+            if (!isLoggedIn) {
+                alert('Please log in first to purchase a plan.');
+                document.getElementById('authOverlay').classList.remove('hidden');
+                return;
+            }
+
+            const paypalEmail = 'vainqueuragevi@gmail.com';
+            const planLabel = planType === 'monthly' ? 'Monthly Plan' : 'Annual Plan';
+            const amountStr = planType === 'monthly' ? '19.00' : '149.00';
+            const itemName = encodeURIComponent(`writernet.org — ${planLabel}`);
+
+            const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick` +
+                `&business=${encodeURIComponent(paypalEmail)}` +
+                `&item_name=${itemName}` +
+                `&amount=${amountStr}` +
+                `&currency_code=USD` +
+                `&no_shipping=1` +
+                `&no_note=1` +
+                `&return=https://writernet.org/payment-success` +
+                `&cancel_return=https://writernet.org/payment-cancel`;
+
+            currentUser.plan = planType;
+            currentUser.planActivated = (planType === 'annual');
+
+            document.getElementById('confirmPlan').textContent = planLabel + (planType === 'monthly' ? ' ($19/month)' : ' ($149/year)');
+            document.getElementById('confirmAmount').textContent = '$' + amountStr;
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-payment-confirm').classList.add('active');
+            window.scrollTo(0, 0);
+
+            setTimeout(() => { window.open(paypalUrl, '_blank'); }, 800);
+
+            setTimeout(() => {
+                const waMessage = encodeURIComponent(
+                    `💳 New plan payment from writernet.org!\n\n` +
+                    `Plan: ${planLabel}\n` +
+                    `Amount: $${amountStr}\n` +
+                    `User: ${currentUser.name || 'Unknown'}\n` +
+                    `Email: ${currentUser.email || 'Unknown'}\n\n` +
+                    `Please verify the PayPal payment and activate access.`
+                );
+                const notify = confirm(`Payment page opened in a new tab.\n\nWould you like to also notify the owner via WhatsApp about this payment?`);
+                if (notify) window.open(`https://wa.me/254736250002?text=${waMessage}`, '_blank');
+            }, 1500);
+        };
+
+        // ================= UPDATE UI =================
+        function updateUserUI() {
+            const name = currentUser.name || 'Writer';
+            const ids = ['displayUserName','displayUserNameJobs','displayUserNameEarnings','displayUserNamePlans','displayUserNameConfirm','displayUserNameDetail','displayUserNameSetup','displayUserNameProfile','displayUserNameAbout','displayUserNameHelp'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = name;
+            });
+
+            document.getElementById('profileDisplayName').textContent = name;
+            document.getElementById('profileDisplayTitle').textContent = currentUser.title || 'Professional Writer';
+            document.getElementById('profileDisplayEmail').innerHTML = `<i class="fas fa-envelope"></i> ${currentUser.email || 'email@example.com'}`;
+            document.getElementById('profileDisplayBio').textContent = currentUser.bio || 'No bio added yet. Complete your profile to tell clients about yourself.';
+
+            const skillsEl = document.getElementById('profileDisplaySkills');
+            if (currentUser.skills.length > 0) {
+                skillsEl.innerHTML = currentUser.skills.map(s => `<span class="profile-skill-tag">${s}</span>`).join('');
+            } else {
+                skillsEl.innerHTML = '<span class="profile-empty">No skills selected yet.</span>';
+            }
+
+            document.getElementById('profileDetailName').textContent = currentUser.name || '—';
+            document.getElementById('profileDetailEmail').textContent = currentUser.email || '—';
+            document.getElementById('profileDetailTitle').textContent = currentUser.title || '—';
+            document.getElementById('profileDetailJoined').textContent = currentUser.joined || '—';
+            document.getElementById('profileDetailPayment').textContent = currentUser.paymentMethod || '—';
+
+            if (currentUser.avatarDataUrl) {
+                const wraps = ['navAvatar','navAvatarJobs','navAvatarEarnings','navAvatarPlans','navAvatarConfirm','navAvatarDetail','navAvatarSetup','navAvatarProfile','navAvatarAbout','navAvatarHelp'];
+                wraps.forEach(wrapId => {
+                    const wrap = document.getElementById(wrapId);
+                    if (wrap) { const img = wrap.querySelector('img'); if (img) { img.src = currentUser.avatarDataUrl; wrap.classList.add('has-image'); } }
+                });
+                const lg = document.getElementById('profileAvatarLg');
+                if (lg) { document.getElementById('profileAvatarLgImg').src = currentUser.avatarDataUrl; lg.classList.add('has-image'); }
+            }
+        }
+
+        // ================= NAVIGATION =================
+        window.navigateTo = function(pageId) {
+            if (!isLoggedIn && pageId !== 'home' && pageId !== 'plans') {
+                document.getElementById('authOverlay').classList.remove('hidden');
+                return;
+            }
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + pageId);
+            if (target) target.classList.add('active');
+            window.scrollTo(0,0);
+            if (pageId === 'jobs') renderJobs();
+            if (pageId === 'profile') updateUserUI();
+            if (pageId === 'earnings') {
+                updateBalanceUI();
+                renderTasks();
+            }
+        };
+
+        // ================= RENDER JOBS =================
+        function renderJobs(filteredJobs) {
+            const jobs = filteredJobs || allJobs;
+            const grid = document.getElementById('jobsGrid');
+            const countEl = document.getElementById('jobCount');
+            if (!grid) return;
+            const toShow = jobs.slice(0, displayedCount);
+            countEl.textContent = `Showing ${toShow.length} of 10,000+ jobs`;
+            grid.innerHTML = toShow.map(job => `
+                <div class="job-card" onclick="openJobDetail(${job.id})">
+                    <div class="job-header">
+                        <div class="company-icon">${job.icon}</div>
+                        <span class="job-type">${job.type}</span>
+                    </div>
+                    <div class="job-title">${job.title}</div>
+                    <div class="job-company"><i class="fas fa-building"></i> ${job.company} • ${job.location}</div>
+                    <div class="job-desc">${job.desc}</div>
+                    <div class="job-meta">
+                        <div class="job-rate">${job.rate} <span>/hour</span></div>
+                        <button class="btn-apply-sm" onclick="event.stopPropagation();openJobDetail(${job.id})">Apply</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterJobs() {
+            const query = (document.getElementById('jobSearch')?.value || '').toLowerCase();
+            const typeFilter = document.getElementById('jobTypeFilter')?.value || '';
+            let filtered = allJobs;
+            if (query) {
+                filtered = filtered.filter(j =>
+                    j.title.toLowerCase().includes(query) ||
+                    j.company.toLowerCase().includes(query) ||
+                    j.desc.toLowerCase().includes(query)
+                );
+            }
+            if (typeFilter) filtered = filtered.filter(j => j.type.toLowerCase().includes(typeFilter));
+            displayedCount = 12;
+            renderJobs(filtered);
+        }
+
+        function loadMoreJobs() { displayedCount += 24; renderJobs(); }
+
+        // ================= JOB DETAIL =================
+        window.openJobDetail = function(id) {
+            if (!isLoggedIn) { document.getElementById('authOverlay').classList.remove('hidden'); return; }
+            const job = allJobs.find(j => j.id === id);
+            if (!job) return;
+            currentJob = job;
+            const container = document.getElementById('jobDetailContent');
+            container.innerHTML = `
+                <div class="job-detail-header">
+                    <div class="company-icon">${job.icon}</div>
+                    <h1>${job.title}</h1>
+                    <div class="meta-row">
+                        <span><i class="fas fa-building"></i> ${job.company}</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
+                        <span><i class="fas fa-clock"></i> ${job.posted}</span>
+                        <span><i class="fas fa-tag"></i> ${job.type}</span>
+                    </div>
+                    <div class="job-rate" style="font-size:1.2rem;">${job.rate} <span>/hour</span></div>
+                </div>
+                <div class="job-detail-body">
+                    <div class="job-description">
+                        <h3>Job Description</h3>
+                        <p>${job.desc}</p>
+                        <h3>Requirements</h3>
+                        <ul>${job.requirements.map(r => `<li>${r}</li>`).join('')}</ul>
+                        <h3>About ${job.company}</h3>
+                        <p>${job.company} is a leading company in its field, committed to excellence and innovation. We value creativity, dedication, and professional growth.</p>
+                    </div>
+                    <div class="apply-card">
+                        <h3>Apply for this position</h3>
+                        <p class="sub">Fill in your details and upload your CV. We'll get back to you within 48 hours.</p>
+                        <form class="apply-form" id="applyForm" onsubmit="submitApplication(event)">
+                            <div class="field-group"><label>Full Name *</label><input type="text" name="name" required placeholder="Your full name" value="${currentUser.name || ''}"></div>
+                            <div class="field-group"><label>Email Address *</label><input type="email" name="email" required placeholder="your@email.com" value="${currentUser.email || ''}"></div>
+                            <div class="field-group"><label>Phone Number *</label><input type="tel" name="phone" required placeholder="+254 7XX XXX XXX"></div>
+                            <div class="field-group"><label>Cover Letter (optional)</label><textarea name="cover" rows="3" placeholder="Why are you a great fit?"></textarea></div>
+                            <div class="file-upload" onclick="document.getElementById('cvUpload').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload your CV</p>
+                                <p style="font-size:0.68rem;">PDF, DOC, or DOCX (max 5MB)</p>
+                                <input type="file" id="cvUpload" name="cv" accept=".pdf,.doc,.docx" onchange="showFileName(this)">
+                                <div class="file-name" id="cvFileName"></div>
+                            </div>
+                            <button type="submit" class="btn-submit" id="applyBtn"><i class="fas fa-paper-plane"></i> Submit Application</button>
+                            <p class="form-note">Your application will be sent to orgwriternet@gmail.com</p>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-job-detail').classList.add('active');
+            window.scrollTo(0,0);
+        };
+
+        window.showFileName = function(input) {
+            const el = document.getElementById('cvFileName');
+            if (input.files && input.files[0]) el.textContent = '✓ ' + input.files[0].name;
+        };
+
+        // ================= SUBMIT APPLICATION =================
+        window.submitApplication = function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const name = form.querySelector('[name="name"]').value.trim();
+            const email = form.querySelector('[name="email"]').value.trim();
+            const phone = form.querySelector('[name="phone"]').value.trim();
+            const cover = form.querySelector('[name="cover"]').value.trim();
+            const cvFile = document.getElementById('cvUpload').files[0];
+
+            if (!name || !email || !phone) { alert('Please fill in Name, Email, and Phone.'); return; }
+            if (!cvFile) { alert('Please upload your CV to continue.'); return; }
+
+            const btn = document.getElementById('applyBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Application Submitted!';
+                btn.style.background = 'var(--success)';
+
+                const subject = encodeURIComponent(`Application: ${currentJob.title} - ${name}`);
+                const body = encodeURIComponent(
+                    `Job: ${currentJob.title}\nCompany: ${currentJob.company}\n\n` +
+                    `Applicant: ${name}\nEmail: ${email}\nPhone: ${phone}\n\n` +
+                    `Cover Letter:\n${cover || 'Not provided'}\n\n` +
+                    `CV File: ${cvFile.name} (attach manually)`
+                );
+
+                alert(`✅ Application for "${currentJob.title}" received!\n\n` +
+                    `Applicant: ${name}\nEmail: ${email}\nPhone: ${phone}\nCV: ${cvFile.name}\n\n` +
+                    `⚠️ DEMO MODE — Click OK to open your email client with details prefilled.`);
+
+                window.location.href = `mailto:orgwriternet@gmail.com?subject=${subject}&body=${body}`;
+
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 3000);
+            }, 1200);
+        };
+
+        // ================= FAQ =================
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.closest('.faq-item');
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
+            });
+        });
+
+        // ================= SHOW AUTH =================
+        window.showAuthOverlay = function() {
+            document.getElementById('authOverlay').classList.remove('hidden');
+        };
+
+        // ================= INIT =================
+        renderJobs();
+        renderTasks();
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-home').classList.add('active');
+        document.getElementById('authOverlay').classList.remove('hidden');
+    </script>
+</body>
+</html>
